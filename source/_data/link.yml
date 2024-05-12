@@ -1,0 +1,37 @@
+# 1. 確保你使用 Butterfly 主題
+# 2. 確保你的網站是 https
+# 3. 修改 source/_data/link.yml
+# 4. 按要求新增內容
+#     - name: 博客名
+#       link: 博客地址
+#       avatar: 博客頭像
+#       descr: 博客描述
+# 5. 發起 Pull requests ，合併到 butterfly.js.org 倉庫
+
+- class_name: '<i class="fas fa-check-double" style="color: #FF6666;padding-right: 0.4rem"></i>网站'
+  class_desc: '<span style="font-style: italic;">重要的事情説一遍</span>'
+  link_list:
+    - name: 我的网站
+      link: http://bootree.cn
+      avatar: /img/avatar.png
+      descr: 自给自足的光，永远不会暗
+    - name: Hexo
+      link: https://hexo.io/zh-tw/
+      avatar: https://d33wubrfki0l68.cloudfront.net/6657ba50e702d84afb32fe846bed54fba1a77add/827ae/logo.svg
+      descr: 快速、簡單且強大的網誌框架
+    - name: Butterfly
+      link: https://github.com/jerryc127/hexo-theme-butterfly
+      avatar: https://fastly.jsdelivr.net/gh/jerryc127/CDN/img/butterfly-github-avatar.png
+      descr: '🦋 A Hexo Theme: Butterfly'
+
+- class_name: '<i class="fas fa-fan" style="color:#00cccc;padding-right: 0.4rem"></i>鱼塘'
+  class_desc: '<span style="font-style: italic;">最可愛的朋友在這裏</span>'
+  link_list:
+    - name: 山夆
+      link: https://zeng0813.github.io/
+      avatar: https://npm.elemecdn.com/anzhiyu-blog-static@1.0.4/img/avatar.jpg
+      descr: 代码改变未来，努力coding...
+    - name: 萧兮博客
+      link: https://www.m5f.cn/
+      avatar: https://www.m5f.cn/images/wx.png
+      descr: 每天进步一点
