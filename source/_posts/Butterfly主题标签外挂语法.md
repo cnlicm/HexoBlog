@@ -3,13 +3,13 @@ title: Butterfly主题标签外挂语法
 comments: false
 date: 2024-05-12 09:55:15
 tags:
-    - Butterfly
+    - Hexo
 categories:
     - Hexo
 keywords:
 description: 节选自官网教程
 top_img:
-cover:
+cover: https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240523233842.png
 abbrlink:
 language: zh-CN
 ---

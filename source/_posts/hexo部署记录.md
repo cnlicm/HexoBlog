@@ -9,7 +9,7 @@ categories:
 keywords:
 description:
 top_img:
-cover:
+cover: https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240523233623.png
 abbrlink:
 ---
 
