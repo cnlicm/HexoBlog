@@ -11,7 +11,7 @@ keywords:
     - XAML
 description:
 top_img:
-cover: https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/wpf.png
+cover: https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240527195528.png
 abbrlink:
 ---
 
