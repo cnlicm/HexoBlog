@@ -3,9 +3,10 @@ title: git通过ssh连接github
 comments: false
 date: 2024-05-27 20:01:37
 tags:
-    - git
+    - Git
 categories:
     - 工具
+    - Git
 keywords:
 description:
 top_img:
