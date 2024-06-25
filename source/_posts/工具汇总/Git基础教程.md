@@ -1,0 +1,643 @@
+---
+title: Git基础教程
+comments: false
+date: 2024-06-25 19:49:46
+tags:
+    - Git
+categories:
+    - Tool
+    - Git
+keywords:
+description:
+top_img:
+cover: https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240527200328.png
+abbrlink:
+---
+
+## Git配置
+
+### 设置用户名和邮箱
+
+&emsp;&emsp;用于设置提交记录中的用户名和邮箱，这些信息会出现在每一次提交中。
+
+```Bash
+git config --global user.name "your name"
+git config --global user.email "your email"
+```
+
+> 示例
+
+```Bash
+git config --global user.name "John Doe"
+git config --global user.email "john.doe@example.com"
+```
+
+### 配置SSH
+
+{% note warning %}
+    Git通过SSH连接Github，详情可见 {% btn '/2024/05/27/工具汇总/git通过ssh连接github/',SSH配置,far fa-hand-point-right,green larger %}
+{% endnote %}
+
+## 创建仓库
+
+### 初始化git仓库
+
+&emsp;&emsp;在当前目录下创建一个新的Git仓库，生成一个隐藏的`.git`目录用于存放Git的所有版本控制信息。
+
+```Bash
+git init
+```
+
+> 示例
+
+```Bash
+mkdir myproject
+cd myproject
+
+echo "# MyExample" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/cnlicm/MyExample.git
+git push -u origin main
+
+```
+
+### 克隆git仓库
+
+&emsp;&emsp;从远程仓库复制一个完整的Git仓库到本地。
+
+```Bash
+git clone <url> [localRepositoryName]
+```
+
+- **url(必填)** ：Git仓库地址
+- **localRepositoryName(可选)** ：克隆后本地仓库的名称，若未指定默认采用远程仓库的名字
+
+&emsp;&emsp;克隆时，可以用不同的协议，包括`ssh`、`git`、`https`等，其中最常用的是ssh，因为速度较快，还可以配置公钥免输入密码，各种写法格式如下：
+
+```Bash
+git clone git@github.com/example/example.git            --SSH协议
+git clone git://github.com/example/example.git          --GIT协议
+git clone https://github.com/example/example.git        --HTTPS协议
+```
+
+> 示例
+
+```Bash
+git clone https://github.com/user/repo.git
+```
+
+## 基本操作
+
+### 添加文件到暂存区
+
+&emsp;&emsp;将指定文件的改动添加到暂存区。可以使用.添加所有改动的文件。
+
+``` Bash
+git add <文件名>
+
+# 添加所有文件
+git add .
+```
+
+> 示例
+
+```Bash
+git add README.md
+git add .
+```
+
+### 查看文件的状态
+
+&emsp;&emsp;显示当前工作目录和暂存区的状态，显示哪些文件发生了变化但还未暂存，哪些文件已经暂存但未提交。
+
+```Bash
+git status
+```
+
+### 查看更新的详细信息
+
+&emsp;&emsp; 执行 `git diff` 来查看更新的详细信息，与`git status`不同的是，`git status`只显示更新的状态，而 `git diff` 可以显示已写入缓存与已修改但尚未写入缓存的改动的区别具体的详细信息。
+
+```Bash
+git diff
+```
+
+### 提交暂存区文件到本地仓库
+
+&emsp;&emsp;将暂存区的所有内容提交到本地仓库，并附带一条提交信息。
+
+```Bash
+git commit -m "提交信息"
+```
+
+> 示例
+
+```Bash
+git commit -m "Initial commit"
+```
+
+### 查看日志
+
+&emsp;&emsp;使用`git log`可查看提交历史
+
+```Bash
+git log
+```
+
+### 撤销暂存区的改动
+
+&emsp;&emsp;将文件从暂存区移除，但保留工作目录的改动。
+
+```Bash
+git reset HEAD <file-name>
+```
+
+> 示例
+
+```Bash
+git reset HEAD README.md
+```
+
+### 撤销工作区的改动
+
+&emsp;&emsp;将文件恢复到最近一次提交的状态。
+
+```Bash
+git checkout -- <file-name>
+```
+
+> 示例
+
+```bash
+git checkout -- README.md
+```
+
+### 删除文件
+
+&emsp;&emsp;如果只是简单地从工作目录中手工删除文件，运行 `git status` 时就会在 Changes not staged for commit 的提示。要从 Git 中移除某个文件，就必须要从已跟踪文件清单中移除，然后提交。可以如下使用：
+
+```Bash
+git rm <file>
+
+git rm -f <file> # 强制删除，如果删除之前修改过并且已经放到暂存区域的话，则必须要用强制删除选项 -f
+
+git rm --cached <file> # 仅删除暂存区跟踪状态不会删除文件
+
+git rm –r * # 可递归删除，即如果后面跟的是一个目录做为参数，则会递归删除整个目录中的所有子目录和文件：
+
+```
+
+### 移动或重命名文件
+
+&emsp;&emsp;`git mv `命令用于移动或重命名一个文件、目录、软连接，如要将一个test.txt文件重命名为newtest.txt，则可以使用如下命令：
+
+```Bash
+git mv test1.txt test2.txt # 原地移动可实现重命名
+```
+
+## 分支操作
+
+### 查看当前分支
+
+&emsp;&emsp;列出所有本地分支，当前所在的分支前会有一个星号。
+
+```Bash
+git branch
+```
+
+### 创建新分支
+
+&emsp;&emsp;创建一个新的分支，但不会自动切换到新分支。
+
+```Bash
+git branch <branch-name>
+```
+
+> 示例
+
+```Bash
+git branch main
+```
+
+### 切换分支
+
+&emsp;&emsp;切换到指定的分支。
+
+```Bash
+git checkout <branch-name>
+```
+
+> 示例
+
+```Bash
+git checkout main
+```
+
+### 创建并切换到新分支
+
+&emsp;&emsp;创建一个新分支并自动切换到该分支。
+
+```Bash
+git checkout -b <branch-name>
+```
+
+&emsp;&emsp;这是一个符合操作，类似于执行如下指令：
+
+```Bash
+git branch <branch-name>        # 创建新分支
+git checkout <branch-name>      # 切换到新分支
+```
+
+> 示例
+
+```Bash
+git checkout -b pro
+```
+
+### 删除分支
+
+&emsp;&emsp;删除指定的本地分支。
+
+```Bash
+git branch -d <branch-name>
+```
+
+> 示例
+
+```Bash
+git branch -d pro
+```
+
+### 合并分支
+
+&emsp;&emsp;将指定分支的历史记录和改动合并到当前分支。
+
+```Bash
+git merge <branch-name>
+```
+
+> 示例
+
+```Bash
+# 将dev分支合并到main分支
+git checkout main
+git merge dev
+```
+
+## 远程仓库操作
+
+### 查看远程仓库
+
+&emsp;&emsp;列出所有远程仓库的别名及其对应的URL。
+
+```Bash
+git remote -v
+```
+
+### 添加远程仓库
+
+&emsp;&emsp;为当前仓库添加一个新的远程仓库。
+
+```Bash
+git remote add origin <repository_url>
+```
+
+> 示例
+
+```Bash
+git remote add origin https://github.com/cnlicm/MyExample.git
+git branch -M main
+git push -u origin main
+```
+
+### 推送到远程仓库
+
+&emsp;&emsp;将本地分支的更新推送到指定的远程仓库。
+
+```Bash
+git push origin <branch-name>
+```
+
+> 示例
+
+```Bash
+git push origin main
+```
+
+### 拉去远程仓库的更新
+
+&emsp;&emsp;从远程仓库拉取更新并合并到当前分支。
+
+```Bash
+git pull origin <branch-name>
+```
+
+> 示例
+
+```Bash
+git pull origin main
+```
+
+## 标签操作
+
+### 创建标签
+
+&emsp;&emsp;为当前提交创建一个标签，标签通常用于标记重要的版本。
+
+```Bash
+git tag <tag-name>
+```
+
+> 示例
+
+```Bash
+git tag v1.0
+```
+
+### 查看标签
+
+&emsp;&emsp;列出所有标签。
+
+```Bash
+git tag
+```
+
+### 推送标签到远程仓库
+
+&emsp;&emsp;将指定标签推送到远程仓库。
+
+```Bash
+git push origin <tag-name>
+```
+
+> 示例
+
+```Bash
+git push origin v1.0
+```
+
+### .gitignore文件
+
+&emsp;&emsp;`.gitignore `文件用于指定哪些文件或目录不应被Git管理。例子：
+
+```Bash
+## Ignore Visual Studio temporary files, build results, and
+## files generated by popular Visual Studio add-ons.
+
+# vscode
+.vscode
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio 2015 cache/options directory
+.vs/
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUNIT
+*.VisualState.xml
+TestResult.xml
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# DNX
+project.lock.json
+artifacts/
+
+*_i.c
+*_p.c
+*_i.h
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Chutzpah Test files
+_Chutzpah*
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# TFS 2012 Local Workspace
+$tf/
+
+# Guidance Automation Toolkit
+*.gpState
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustCode is a .NET coding add-in
+.JustCode
+
+# TeamCity is a build add-in
+_TeamCity*
+
+# DotCover is a Code Coverage Tool
+*.dotCover
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# MightyMoose
+*.mm.*
+AutoTest.Net/
+
+# Web workbench (sass)
+.sass-cache/
+
+# Installshield output folder
+[Ee]xpress/
+
+# DocProject is a documentation generator add-in
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# Click-Once directory
+publish/
+
+# Publish Web Output
+*.[Pp]ublish.xml
+*.azurePubxml
+# TODO: Comment the next line if you want to checkin your web deploy settings
+# but database connection strings (with potential passwords) will be unencrypted
+*.pubxml
+*.publishproj
+
+# Microsoft Azure Web App publish settings. Comment the next line if you want to
+# checkin your Azure Web App publish settings, but sensitive information contained
+# in these scripts will be unencrypted
+PublishScripts/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config
+# NuGet v3's project.json files produces more ignoreable files
+*.nuget.props
+*.nuget.targets
+
+# Microsoft Azure Build Output
+csx/
+*.build.csdef
+
+# Microsoft Azure Emulator
+ecf/
+rcf/
+
+# Windows Store app package directories and files
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!*.[Cc]ache/
+
+# Others
+ClientBin/
+~$*
+*~
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+node_modules/
+orleans.codegen.cs
+
+# Since there are multiple workflows, uncomment next line to ignore bower_components
+# (https://github.com/github/gitignore/pull/1529#issuecomment-104372622)
+#bower_components/
+
+# RIA/Silverlight projects
+Generated_Code/
+
+# Backup & report files from converting an old project file
+# to a newer Visual Studio version. Backup files are not needed,
+# because we have git ;-)
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+
+# Microsoft Fakes
+FakesAssemblies/
+
+# GhostDoc plugin setting file
+*.GhostDoc.xml
+
+# Node.js Tools for Visual Studio
+.ntvs_analysis.dat
+
+# Visual Studio 6 build log
+*.plg
+
+# Visual Studio 6 workspace options file
+*.opt
+
+# Visual Studio LightSwitch build output
+**/*.HTMLClient/GeneratedArtifacts
+**/*.DesktopClient/GeneratedArtifacts
+**/*.DesktopClient/ModelManifest.xml
+**/*.Server/GeneratedArtifacts
+**/*.Server/ModelManifest.xml
+_Pvt_Extensions
+
+# Paket dependency manager
+.paket/paket.exe
+paket-files/
+
+# FAKE - F# Make
+.fake/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+```

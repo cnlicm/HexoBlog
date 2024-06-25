@@ -5,7 +5,7 @@ date: 2024-06-01 11:53:48
 tags:
     - WindowsUpdate
 categories:
-    - 工具
+    - Tool
     - WindowsUpdate
 keywords:
 description:

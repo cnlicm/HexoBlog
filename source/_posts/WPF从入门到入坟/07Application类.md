@@ -380,27 +380,84 @@ WPF声音不支持程序集资源。因此，无法从资源流中析取音频�
 ```
 ## 本地化
 
-&emsp;&emsp;当需要本地化窗口时，程序集资源也可以提供方便。使用资源，可根据 Windows操作系统的当前文化设置改变控件。对于需要翻译为不同语言的文本标签和图像，这尤其有用。
+&emsp;&emsp;实现本地化的方法主要有以下三种：
 
-### 构建能够本地化的用户界面
+- 通过编译项目以设置`x:Uid`并使用LocBaml工具实现
+- 通过 `DynamicResource`实现
+- 通过`Resx`文件实现
 
-&emsp;&emsp;在开始翻译任何内容前，首先需要考虑应用程序会如何响应内容变化。用户界面应当能够调整自身以适应动态的内容。下面列出建议采用的一些原则：
 
-- 不使用硬编码的宽度或高度(或至少对那些包含不能滚动的文本内容的元素不使用硬编码的宽度和高度)。
-- 将 Window.SizeToContent 属性设置为 Width、Height 或 WidthAndHeight，使窗口尺寸能够根据需要扩大(根据窗口结构的不同，并不总是需要这样，但有时是很有用的)。
-- 使用 ScrollViewer 控件封装大量文本。
+###  LocBaml工具
 
-### 使应用程序为本地化做好准备
+&emsp;&emsp;[官方介绍](https://learn.microsoft.com/zh-cn/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview?view=netframeworkdesktop-4.8&redirectedfrom=MSDN)的方法，考虑到实现步骤略为复杂，所以直接忽略
 
-&emsp;&emsp;在第一个`<PropertyGroup>`元素中的任意地方添加以下元素：
+### DynamicResourc方式
 
-```XML
-<PropertyGroup>
-    ...
-	<UICulture>en-US</UICulture>
-</PropertyGroup>
-```
+&emsp;&emsp;主要是在程序中添加`Resource Dictionary`类型的文件，并在其中放入本地化资源字符串；在XAML代码中，直接使用`{DynamicReource XXX}`来实现；这种方法比较方便，不过也有两个缺点：
+- 在XAML中，应用DynamicResource的属性必须为依赖属性，否则会出错
+- 在C#代码中引用稍微有点麻烦，需要从Resource Dictionary中获取并转化为字符串
 
-&emsp;&emsp;上面的标记告诉编译器，应用程序的默认文化是美式英语(显然，也可选择其他合适的文化)。一旦进行了这一修改，生成过程就会发生变化。下次编译应用程序时，最后会生成名为en-US 的子文件夹。在该文件夹中包含的是附属程序集，附属程序集与应用程序同名，而且扩展名为.resources.dll(如 LocalizableApplication.resources.dl)。附属程序集包含了应用程序的所有编译过的 BAML资源，以前这些资源保存在主应用程序的程序集中。
+{% note info %}
+[参考博客](https://blog.csdn.net/qq_43562262/article/details/132273423)
+{% endnote %}
+
+### Resx文件
+
+{% note info %}
+Visual Studio搜索并安装扩展插件(ResXManager)[https://marketplace.visualstudio.com/items?itemName=TomEnglert.ResXManager]
+{% endnote %}
+
+1. 在项目内`Properties`文件夹内添加新建项，资源文件`Resource.resx`
+    ![](https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240610092803.png)
+1. 手动编译项目，然后`Resource.resx`右键菜单→在`ResX Manager`中打开
+    ![](https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240610092901.png)
+1. 打开后界面如下
+    ![](https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240610092919.png)
+1. 添加新语言
+    ![](https://cnlicm-blog-image.oss-cn-shenzhen.aliyuncs.com/img/20240610092932.png)
+1. 运行时切换语言
+    1. 新建类`ResourceService`
+        ```C#
+        public class ResourceService : INotifyPropertyChanged
+        {
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private static readonly ResourceService _current = new ResourceService();
+            public static ResourceService Current => _current;
+
+            readonly Properties.Resource resource = new Properties.Resource();
+            public Properties.Resource Resources => resource;
+
+            protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                var handler = this.PropertyChanged;
+                if (handler != null)
+                    handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public void ChangedCulture(string name)
+            {
+                Properties.Resource.Culture = CultureInfo.GetCultureInfo(name);
+                this.RaisePropertyChanged("Resources");
+            }
+        }
+        ```
+    1. XAML使用
+        ```XML
+        <Button Content="{Binding Resources.Hello, Source={x:Static local:ResourceService.Current}}"/>
+        ```
+    1. 切换语言
+        ```C#
+        private void Changed()
+        {
+            ResourceService.Current.ChangedCulture("en-US");
+        }
+        ```
+
+
+
+
+
+
 
 
